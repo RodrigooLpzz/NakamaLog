@@ -12,6 +12,26 @@ interface Review {
   comment: string
 }
 
+function TarjetaAnime({ anime, onVerReviews }: { anime: Anime; onVerReviews: (id: number) => void }) {
+  return (
+    <li className="card">
+      <div className="card-info">
+        <strong>{anime.name}</strong> ({anime.release_year})
+      </div>
+      <button onClick={() => onVerReviews(anime.id)}>Ver reviews</button>
+    </li>
+  )
+}
+
+function TarjetaReview({ review }: { review: Review }) {
+  return (
+    <li className="card">
+      <span className="badge">{review.rating}/10</span>
+      <p>{review.comment}</p>
+    </li>
+  )
+}
+
 export default function App() {
   const [animes, setAnimes] = useState<Anime[]>([])
   const [reviews, setReviews] = useState<Review[]>([])
@@ -28,22 +48,31 @@ export default function App() {
        .then(data => setReviews(data));
   }
 
-    return(
-     <div>
-       <h1>NakamaLog</h1>
-       <ul>
-         {animes.map(Anime => (
-           <li key={Anime.id}>
-             {Anime.name} ({Anime.release_year})
-             <button onClick={() => verReviews(Anime.id)}>Ver reviews</button>
-           </li>
-         ))}
-       </ul>
+  return (
+    <main className="layout">
+      <header>
+        <h1>NakamaLog</h1>
+      </header>
 
-       <h2>Reviews</h2>
-       <ul>
-         {reviews.map(r => <li key={r.id}>{r.rating}/10 - {r.comment}</li>)}
-       </ul>
-     </div>
-   );
+      <div className="contenido">
+        <section>
+          <h2>Catálogo</h2>
+          <ul>
+            {animes.map(Anime => (
+              <TarjetaAnime key={Anime.id} anime={Anime} onVerReviews={verReviews} />
+            ))}
+          </ul>
+        </section>
+
+        <section>
+          <h2>Reviews</h2>
+          <ul>
+            {reviews.map(r => (
+              <TarjetaReview key={r.id} review={r} />
+            ))}
+          </ul>
+        </section>
+      </div>
+    </main>
+  );
 }
